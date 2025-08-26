@@ -1,22 +1,22 @@
-<script setup>
-import TokenForm from './components/TokenForm.vue'
-</script>
-
 <template>
-  <TokenForm />
+  <div class="container">
+    <h1>Projeto Zerado</h1>
+    <p>Projeto limpo com sucesso!</p>
+  </div>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<script setup>
+// Componente limpo
+</script>
+
+<style>
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+h1 {
+  color: #333;
 }
 </style>
