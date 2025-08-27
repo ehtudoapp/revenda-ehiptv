@@ -26,7 +26,7 @@ ARG PB_WORKDIR=/pocketbase
 ARG PB_HOME=/opt/pocketbase
 ARG PB_VERSION=0.29.3
 
-ENV TZ=UTC \
+ENV TZ=America/Sao_Paulo \
     PB_PORT=8090 \
     PB_WORKDIR=${PB_WORKDIR} \
     PB_HOME=${PB_HOME}
