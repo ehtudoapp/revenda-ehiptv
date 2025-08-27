@@ -4,7 +4,7 @@
 
     <label class="field">
       <span>Número de celular</span>
-      <input v-model="phone" type="text" inputmode="numeric" placeholder="(xx) xxxxx-xxxx ou 5511999998888" />
+      <input v-model="phone" type="text" inputmode="numeric" placeholder="5511999998888" />
     </label>
 
 
