@@ -78,10 +78,10 @@ async function onSubmit() {
 </script>
 
 <style scoped>
-.auth-card { width:100%; max-width:420px; margin:4rem auto; background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; padding:2rem; box-shadow:0 6px 20px rgba(0,0,0,0.2); display:flex; flex-direction:column; gap:1rem }
-.field { display:flex; flex-direction:column; gap:.5rem }
-.field input { padding:.6rem .75rem; border-radius:6px; border:1px solid rgba(0,0,0,0.12) }
+.auth-card { width:100%; max-width:26.25rem; margin:4rem auto; background:var(--card-bg); border:1px solid var(--card-border); border-radius:0.625rem; padding:2rem; box-shadow:0 0.375rem 1.25rem rgba(0,0,0,0.2); display:flex; flex-direction:column; gap:1rem }
+.field { display:flex; flex-direction:column; gap:0.5rem }
+.field input { padding:0.6rem 0.75rem; border-radius:0.375rem; border:1px solid rgba(0,0,0,0.12) }
 .actions { display:flex; justify-content:center }
-.actions button { background:var(--accent); color:white; border:none; padding:.6rem 1.1rem; border-radius:6px }
-.note { text-align:center; font-size:.9rem; color:#9ca3af }
+.actions button { background:var(--accent); color:white; border:none; padding:0.6rem 1.1rem; border-radius:0.375rem }
+.note { text-align:center; font-size:0.9rem; color:#9ca3af }
 </style>

@@ -132,13 +132,13 @@ async function copy(text) {
 </script>
 
 <style scoped>
-.page { background: rgba(255,255,255,0.02); padding:1rem; border-radius:8px }
-.field { display:flex; flex-direction:column; gap:.5rem; margin-bottom: .75rem }
-.field input { padding:.6rem .75rem; border-radius:6px; border:1px solid rgba(0,0,0,0.12) }
-.actions { display:flex; gap:.5rem; }
-.actions button { background:var(--accent); color:white; border:none; padding:.5rem .85rem; border-radius:6px }
-.note { color:#9ca3af; margin-top:.5rem }
-.result { margin-top:1rem; background: rgba(255,255,255,0.02); padding: .75rem; border-radius:6px }
-.result code { background: rgba(0,0,0,0.12); padding:.15rem .4rem; border-radius:4px }
-.result button { margin-left:.5rem }
+.page { background: rgba(255,255,255,0.02); padding:1rem; border-radius:0.5rem }
+.field { display:flex; flex-direction:column; gap:0.5rem; margin-bottom: 0.75rem }
+.field input { padding:0.6rem 0.75rem; border-radius:0.375rem; border:1px solid rgba(0,0,0,0.12) }
+.actions { display:flex; gap:0.5rem; }
+.actions button { background:var(--accent); color:white; border:none; padding:0.5rem 0.85rem; border-radius:0.375rem }
+.note { color:#9ca3af; margin-top:0.5rem }
+.result { margin-top:1rem; background: rgba(255,255,255,0.02); padding: 0.75rem; border-radius:0.375rem }
+.result code { background: rgba(0,0,0,0.12); padding:0.15rem 0.4rem; border-radius:0.25rem }
+.result button { margin-left:0.5rem }
 </style>

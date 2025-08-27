@@ -53,6 +53,32 @@ const limit = ref(10)
 const totalClients = ref(null)
 const totalPages = ref(null)
 
+// Simple local cache for clients to reduce backend calls
+const CACHE_KEY = 'clientes_cache_v1'
+// default TTL: 5 minutes
+const CACHE_TTL = 5 * 60 * 1000
+
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    if (!raw) return null
+    const obj = JSON.parse(raw)
+    return obj
+  } catch (e) {
+    console.warn('failed to load clients cache', e)
+    return null
+  }
+}
+
+function saveCache(payload) {
+  try {
+    const toSave = { ts: Date.now(), data: payload }
+    localStorage.setItem(CACHE_KEY, JSON.stringify(toSave))
+  } catch (e) {
+    console.warn('failed to save clients cache', e)
+  }
+}
+
 const expiringToday = computed(() => {
   if (!Array.isArray(clients.value)) return []
   const now = new Date()
@@ -85,6 +111,31 @@ async function fetchClients(opts = {}) {
   loading.value = true
   error.value = ''
   try {
+    // if asking for all clients and not forcing, try cache first
+    if (useAll && !opts.force) {
+      const cached = loadCache()
+      if (cached && cached.ts) {
+        const age = Date.now() - cached.ts
+        // if fresh, use cache and skip network
+        if (age < CACHE_TTL) {
+          clients.value = sortByExpDesc(cached.data.clients || [])
+          totalClients.value = cached.data.totalClients != null ? cached.data.totalClients : (Array.isArray(cached.data.clients) ? cached.data.clients.length : null)
+          totalPages.value = cached.data.totalPages != null ? cached.data.totalPages : null
+          page.value = cached.data.page || usePage
+          limit.value = cached.data.limit || useLimit
+          loading.value = false
+          return
+        } else {
+          // stale: show cached immediately while we refresh in background
+          clients.value = sortByExpDesc(cached.data.clients || [])
+          totalClients.value = cached.data.totalClients != null ? cached.data.totalClients : (Array.isArray(cached.data.clients) ? cached.data.clients.length : null)
+          totalPages.value = cached.data.totalPages != null ? cached.data.totalPages : null
+          page.value = cached.data.page || usePage
+          limit.value = cached.data.limit || useLimit
+          // continue to fetch and update cache
+        }
+      }
+    }
   // Obter token/secret do localStorage (inseridos no login). Fallback para valores de exemplo.
   var token = localStorage.getItem('token') || 'token'
   var secret = localStorage.getItem('secret') || 'sua_chave_secreta'
@@ -115,6 +166,10 @@ async function fetchClients(opts = {}) {
       totalPages.value = data.totalPages != null ? data.totalPages : null
       page.value = data.page || usePage
       limit.value = data.limit || useLimit
+      // persistir no cache
+      try {
+        saveCache({ clients: data.data, totalClients: totalClients.value, totalPages: totalPages.value, page: page.value, limit: limit.value })
+      } catch (e) { /* ignore */ }
     } else if (data && data.result === false) {
       throw new Error(data.mens || 'Erro desconhecido')
     } else {
@@ -125,6 +180,10 @@ async function fetchClients(opts = {}) {
         totalPages.value = data.totalPages || null
         page.value = data.page || usePage
         limit.value = data.limit || useLimit
+        // persistir no cache
+        try {
+          saveCache({ clients: data.data, totalClients: totalClients.value, totalPages: totalPages.value, page: page.value, limit: limit.value })
+        } catch (e) { /* ignore */ }
       } else throw new Error('Resposta inesperada')
     }
 
@@ -142,21 +201,21 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page { background: rgba(255,255,255,0.02); padding:1rem; border-radius:8px }
+.page { background: rgba(255,255,255,0.02); padding:1rem; border-radius:0.5rem }
 .clients { margin-top: 1rem }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: .5rem }
-.card { background: rgba(255,255,255,0.03); padding: .75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04) }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(13.75rem, 1fr)); gap: 0.75rem; margin-top: .5rem }
+.card { background: rgba(255,255,255,0.03); padding: .75rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.04) }
 .row { margin-bottom: .4rem; font-size: .95rem }
 .error { color: #f87171 }
 .badge {
   position: absolute;
-  right: 8px;
-  top: 8px;
+  right: 0.5rem;
+  top: 0.5rem;
   background: #f59e0b;
   color: #111827;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
   font-size: 0.75rem;
 }
 .card { position: relative }

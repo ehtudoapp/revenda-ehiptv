@@ -26,16 +26,15 @@ import Home from './pages/Home.vue'
 import GerarTeste from './pages/GerarTeste.vue'
 import Sidebar from './components/Sidebar.vue'
 
-// Force authenticated in dev so you can work on Home.vue without logging
-const isDev = !!import.meta.env.DEV
 
 // in dev we open the app already authenticated so you can work on visuals
-const authenticated = ref(isDev)
-const user = ref(isDev ? { username: 'devuser', credits: 999 } : { username: '', credits: 0 })
+const authenticated = ref(false)
 
 // route is driven by the URL hash (e.g. #/home or #/gerar-teste)
 const route = ref('home')
 const sidebarOpen = ref(false)
+// user state (was provided by the mock previously)
+const user = ref({ username: '', credits: 0 })
 
 function routeFromHash() {
   const h = (location.hash || '').replace(/^#\/?/, '')
@@ -77,16 +76,16 @@ html, body, #app { height: 100%; }
 :root { --card-bg: rgba(255,255,255,0.04); --card-border: rgba(255,255,255,0.06); --accent: #3b82f6 }
 
 .app-layout { display: flex; min-height: calc(100vh - 0px); }
-.sidebar { width: 220px; flex-shrink: 0; }
+.sidebar { width: 13.75rem; flex-shrink: 0; }
 .content { flex: 1 1 auto; padding: 1.5rem; min-height: 100vh; }
 .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem }
 
-.menu-button { display:none; background:transparent; border:1px solid rgba(255,255,255,0.06); color:inherit; padding:.35rem .6rem; border-radius:6px }
+.menu-button { display:none; background:transparent; border:1px solid rgba(255,255,255,0.06); color:inherit; padding:0.35rem 0.6rem; border-radius:0.375rem }
 
-@media (max-width: 768px) {
+@media (max-width: 768px) { /* 768px */
   .content { padding: 1rem; }
   /* show mobile menu button */
-  .menu-button { display:block }
+  .menu-button { display:block; font-size:1.25rem; padding:0.45rem 0.8rem }
   /* keep layout single-column */
   .app-layout { flex-direction: column; }
 }
