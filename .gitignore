@@ -2,3 +2,5 @@ backend/pocketbase.exe
 backend/pb_data
 frontend/dist
 frontend/node_modules
+.playwright-mcp/**/*
+.playwright/

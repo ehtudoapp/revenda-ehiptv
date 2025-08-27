@@ -9,4 +9,16 @@ export default defineConfig({
     outDir: '../backend/pb_public',
     emptyOutDir: true
   }
+  ,server: {
+  port: 5173,
+  strictPort: true,
+    proxy: {
+      // proxia /profile para o pocketbase local na porta 8090
+      '/profile': {
+        target: 'http://127.0.0.1:8090',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  }
 })
