@@ -41,7 +41,7 @@ RUN addgroup -g ${GID} ${GROUP} \
     && chown ${USER}:${GROUP} "${PB_WORKDIR}"
 
 # copy the pocketbase executable from build stage
-COPY --from=build ${BUILD_DIR}/pocketbase ${PB_HOME}/pocketbase
+COPY --from=build /tmp/pb_build/pocketbase ${PB_HOME}/pocketbase
 RUN chmod 755 "${PB_HOME}/pocketbase" \
     && ln -s "${PB_HOME}/pocketbase" /usr/local/bin/pocketbase
 
