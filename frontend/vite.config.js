@@ -4,9 +4,10 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  base: './',
+  // static will be served under /revenda/ on the server
+  base: '/revenda/',
   build:{
-    outDir: '../backend/pb_public',
+    outDir: '../backend/pb_public/revenda',
     emptyOutDir: true
   }
   ,server: {
