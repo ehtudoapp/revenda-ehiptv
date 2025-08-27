@@ -20,16 +20,43 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import Login from './pages/Login.vue'
 import Home from './pages/Home.vue'
 import GerarTeste from './pages/GerarTeste.vue'
 import Sidebar from './components/Sidebar.vue'
 
-const authenticated = ref(false)
-const user = ref({ username: '', credits: 0 })
+// Force authenticated in dev so you can work on Home.vue without logging
+const isDev = !!import.meta.env.DEV
+
+// in dev we open the app already authenticated so you can work on visuals
+const authenticated = ref(isDev)
+const user = ref(isDev ? { username: 'devuser', credits: 999 } : { username: '', credits: 0 })
+
+// route is driven by the URL hash (e.g. #/home or #/gerar-teste)
 const route = ref('home')
 const sidebarOpen = ref(false)
+
+function routeFromHash() {
+  const h = (location.hash || '').replace(/^#\/?/, '')
+  return h || 'home'
+}
+
+onMounted(() => {
+  // initialize from current hash
+  route.value = routeFromHash()
+
+  // listen to back/forward and manual hash changes
+  window.addEventListener('hashchange', () => {
+    route.value = routeFromHash()
+  })
+})
+
+// keep the URL hash in sync when route changes programmatically
+watch(route, (r) => {
+  const expected = '#/' + r
+  if (location.hash !== expected) location.hash = expected
+})
 
 function onLoginSuccess(payload) {
   authenticated.value = true

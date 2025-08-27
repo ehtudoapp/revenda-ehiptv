@@ -5,9 +5,9 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   // static will be served under /revenda/ on the server
-  base: '/revenda/',
+  base: './',
   build:{
-    outDir: '../backend/pb_public/revenda',
+    outDir: '../backend/pb_public',
     emptyOutDir: true
   }
   ,server: {
@@ -23,6 +23,13 @@ export default defineConfig({
       ,
       // proxy /gerar-teste to local pocketbase hook
       '/gerar-teste': {
+        target: 'http://127.0.0.1:8090',
+        changeOrigin: true,
+        secure: false
+      }
+      ,
+      // proxy /get_clientes_all to local pocketbase hook
+      '/get_clientes_all': {
         target: 'http://127.0.0.1:8090',
         changeOrigin: true,
         secure: false
