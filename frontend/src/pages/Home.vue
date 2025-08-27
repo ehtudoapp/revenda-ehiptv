@@ -234,4 +234,14 @@ onMounted(() => {
   font-size: 0.75rem;
 }
 .card { position: relative }
+
+/* Make card borders more visible on light themes */
+@media (prefers-color-scheme: light) {
+  .card {
+    border: 1px solid rgba(0,0,0,0.12);
+    background: rgba(255,255,255,0.96);
+  }
+  .page { background: rgba(0,0,0,0.02); }
+  .badge { color: #111827 }
+}
 </style>
