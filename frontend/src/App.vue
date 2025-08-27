@@ -1,157 +1,56 @@
 <template>
   <div class="app-root">
-    <form class="auth-card" @submit.prevent="onSubmit">
-      <h2>Entrar</h2>
+    <Login v-if="!authenticated" @success="onLoginSuccess" />
 
-      <label class="field">
-        <span>Token</span>
-        <input v-model="token" type="text" placeholder="Cole o token" required />
-      </label>
+    <div v-else class="app-layout">
+      <Sidebar :route="route" @navigate="route = $event" @logout="onLogout" />
 
-      <label class="field">
-        <span>Secret</span>
-        <input v-model="secret" type="password" placeholder="Cole o secret" required />
-      </label>
+      <main class="content">
+        <header class="header">
+          <div>Bem-vindo, <strong>{{ user.username }}</strong></div>
+          <div class="credits">Créditos: <strong>{{ user.credits }}</strong></div>
+        </header>
 
-      <div class="actions">
-        <button type="submit" :disabled="loading">{{ loading ? 'Enviando...' : 'Entrar' }}</button>
-      </div>
-
-      <p class="note" v-if="message">{{ message }}</p>
-    </form>
+        <Home v-if="route==='home'" :user="user" />
+        <GerarTeste v-if="route==='gerar-teste'" />
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import Login from './pages/Login.vue'
+import Home from './pages/Home.vue'
+import GerarTeste from './pages/GerarTeste.vue'
+import Sidebar from './components/Sidebar.vue'
 
-const token = ref(localStorage.getItem('token') || '')
-const secret = ref(localStorage.getItem('secret') || '')
-const message = ref('')
-const loading = ref(false)
+const authenticated = ref(false)
+const user = ref({ username: '', credits: 0 })
+const route = ref('home')
 
-async function onSubmit() {
-  if (!token.value || !secret.value) {
-    message.value = 'Preencha token e secret.'
-    return
-  }
+function onLoginSuccess(payload) {
+  authenticated.value = true
+  user.value = payload.user
+}
 
-  loading.value = true
-  message.value = 'Enviando...'
-
-    try {
-    const res = await fetch(`/profile`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: token.value, secret: secret.value })
-    })
-
-    const ct = res.headers && res.headers.get ? (res.headers.get('content-type') || '') : ''
-    let data
-    try {
-      if (ct.includes('application/json')) data = await res.json()
-      else data = await res.text()
-    } catch (err) {
-      data = await res.text().catch(() => String(err))
-    }
-
-    if (!res.ok) {
-      message.value = `Erro ${res.status}: ${typeof data === 'string' ? data : JSON.stringify(data)}`
-    } else {
-      // Sucesso: salva localmente e mostra feedback
-      localStorage.setItem('token', token.value)
-      localStorage.setItem('secret', secret.value)
-      message.value = 'Enviado com sucesso.'
-    }
-  } catch (err) {
-    message.value = 'Erro ao enviar: ' + String(err)
-  } finally {
-    loading.value = false
-  }
+function onLogout() {
+  authenticated.value = false
+  localStorage.removeItem('token')
+  localStorage.removeItem('secret')
+  user.value = { username: '', credits: 0 }
 }
 </script>
 
 <style>
-:root {
-  --card-bg: rgba(255,255,255,0.04);
-  --card-border: rgba(255,255,255,0.06);
-  --accent: #3b82f6;
-}
+.app-root { min-height: 100vh; display: flex; flex-direction: column; }
+html, body, #app { height: 100%; }
+:root { --card-bg: rgba(255,255,255,0.04); --card-border: rgba(255,255,255,0.06); --accent: #3b82f6 }
 
-.app-root {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
+.app-layout { display: flex; min-height: calc(100vh - 0px); }
+.sidebar { width: 220px; flex-shrink: 0; }
+.content { flex: 1 1 auto; padding: 1.5rem; min-height: 100vh; }
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem }
 
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 2rem;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  color: inherit;
-}
-
-.auth-card h2 {
-  margin: 0 0 .25rem 0;
-  text-align: center;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: .5rem;
-}
-
-.field span {
-  font-size: .9rem;
-  opacity: .9;
-}
-
-.field input {
-  padding: .6rem .75rem;
-  border-radius: 6px;
-  border: 1px solid rgba(0,0,0,0.12);
-  outline: none;
-  background: rgba(255,255,255,0.02);
-  color: inherit;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
-}
-
-.actions button {
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: .6rem 1.1rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.note {
-  text-align: center;
-  font-size: .9rem;
-  color: #9ca3af;
-  margin-top: .5rem;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --card-bg: #fff;
-    --card-border: #e6e9ee;
-    --accent: #2563eb;
-  }
-  .auth-card { color: #111 }
-}
+@media (prefers-color-scheme: light) { :root { --card-bg:#fff; --card-border:#e6e9ee; --accent:#2563eb } }
 </style>
