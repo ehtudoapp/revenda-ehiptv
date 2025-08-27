@@ -4,6 +4,15 @@
     <p>Usuário: <strong>{{ user.username }}</strong></p>
     <p>Créditos disponíveis: <strong>{{ user.credits }}</strong></p>
 
+    <h3>Clientes</h3>
+
+    <div class="controls" style="margin-top:.5rem">
+      <label style="display:inline-flex;align-items:center;gap:0.5rem">
+        <input type="checkbox" v-model="hideTrials" />
+        <span>Ocultar usuários de teste</span>
+      </label>
+    </div>
+
     <div class="clients">
       <div class="today">
         <h4>Expiram hoje</h4>
@@ -20,15 +29,12 @@
           </div>
         </div>
       </div>
-      <h4>Clientes</h4>
-      <div class="controls">
-        <span v-if="totalClients !== null" class="meta">Total: {{ totalClients }} </span>
-      </div>
+  <h4>Todos</h4>
       <div v-if="loading">Carregando clientes...</div>
       <div v-else-if="error" class="error">Erro: {{ error }}</div>
       <div v-else class="cards">
-        <div v-if="clients.length===0">Nenhum cliente encontrado.</div>
-        <div v-for="c in clients" :key="c.id" class="card">
+        <div v-if="filteredClients.length===0">Nenhum cliente encontrado.</div>
+        <div v-for="c in filteredClients" :key="c.id" class="card">
           <div v-if="c.is_trial" class="badge">Teste</div>
           <div class="row"><strong>Usuário:</strong> {{ c.username }}</div>
           <div class="row"><strong>Senha:</strong> {{ c.password }}</div>
@@ -79,12 +85,21 @@ function saveCache(payload) {
   }
 }
 
-const expiringToday = computed(() => {
+const hideTrials = ref(false)
+
+// filtered view of clients according to the toggle (hide trials when checked)
+const filteredClients = computed(() => {
   if (!Array.isArray(clients.value)) return []
+  if (hideTrials.value) return clients.value.filter(c => c && !c.is_trial)
+  return clients.value
+})
+
+const expiringToday = computed(() => {
+  if (!Array.isArray(filteredClients.value)) return []
   const now = new Date()
   const start = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
   const end = start + 24 * 60 * 60 * 1000 - 1
-  return clients.value.filter(c => {
+  return filteredClients.value.filter(c => {
     if (!c || !c.exp_date) return false
     const t = Number(c.exp_date) * 1000
     return t >= start && t <= end
