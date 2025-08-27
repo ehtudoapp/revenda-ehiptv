@@ -4,8 +4,9 @@
     <p>Usuário: <strong>{{ user.username }}</strong></p>
     <p>Créditos disponíveis: <strong>{{ user.credits }}</strong></p>
 
-    <h3>Clientes</h3>
-
+    <h3>Clientes -
+      <small v-if="totalClients !== null" class="meta">Total: {{ totalClients }} </small>
+    </h3>
     <div class="controls" style="margin-top:.5rem">
       <label style="display:inline-flex;align-items:center;gap:0.5rem">
         <input type="checkbox" v-model="hideTrials" />
@@ -19,7 +20,7 @@
         <div v-if="loading">Carregando...</div>
         <div v-else-if="expiringToday.length === 0">Nenhum cliente expira hoje.</div>
         <div v-else class="today-list cards">
-          <div v-for="c in expiringToday" :key="'today-'+c.id" class="card">
+          <div v-for="c in expiringToday" :key="'today-' + c.id" class="card">
             <div v-if="c.is_trial" class="badge">Teste</div>
             <div class="row"><strong>Usuário:</strong> {{ c.username }}</div>
             <div class="row"><strong>Senha:</strong> {{ c.password }}</div>
@@ -29,11 +30,11 @@
           </div>
         </div>
       </div>
-  <h4>Todos</h4>
+      <h4>Todos</h4>
       <div v-if="loading">Carregando clientes...</div>
       <div v-else-if="error" class="error">Erro: {{ error }}</div>
       <div v-else class="cards">
-        <div v-if="filteredClients.length===0">Nenhum cliente encontrado.</div>
+        <div v-if="filteredClients.length === 0">Nenhum cliente encontrado.</div>
         <div v-for="c in filteredClients" :key="c.id" class="card">
           <div v-if="c.is_trial" class="badge">Teste</div>
           <div class="row"><strong>Usuário:</strong> {{ c.username }}</div>
@@ -151,13 +152,13 @@ async function fetchClients(opts = {}) {
         }
       }
     }
-  // Obter token/secret do localStorage (inseridos no login). Fallback para valores de exemplo.
-  var token = localStorage.getItem('token') || 'token'
-  var secret = localStorage.getItem('secret') || 'sua_chave_secreta'
-  var payload = { token: token, secret: secret, page: usePage, limit: useLimit }
-  if (useAll) payload.all = true
+    // Obter token/secret do localStorage (inseridos no login). Fallback para valores de exemplo.
+    var token = localStorage.getItem('token') || 'token'
+    var secret = localStorage.getItem('secret') || 'sua_chave_secreta'
+    var payload = { token: token, secret: secret, page: usePage, limit: useLimit }
+    if (useAll) payload.all = true
 
-  const res = await fetch('/get_clientes_all', {
+    const res = await fetch('/get_clientes_all', {
       // PocketBase routes for hooks are exposed under /api/pb/hooks or similar depending on setup.
       // Aqui chamamos a rota relativa /get_clientes_all no backend; se seu PB estiver em outra base, ajuste a URL.
       method: 'POST',
@@ -216,12 +217,39 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page { background: rgba(255,255,255,0.02); padding:1rem; border-radius:0.5rem }
-.clients { margin-top: 1rem }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(13.75rem, 1fr)); gap: 0.75rem; margin-top: .5rem }
-.card { background: rgba(255,255,255,0.03); padding: .75rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.04) }
-.row { margin-bottom: .4rem; font-size: .95rem }
-.error { color: #f87171 }
+.page {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem;
+  border-radius: 0.5rem
+}
+
+.clients {
+  margin-top: 1rem
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13.75rem, 1fr));
+  gap: 0.75rem;
+  margin-top: .5rem
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  padding: .75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.04)
+}
+
+.row {
+  margin-bottom: .4rem;
+  font-size: .95rem
+}
+
+.error {
+  color: #f87171
+}
+
 .badge {
   position: absolute;
   right: 0.5rem;
@@ -233,15 +261,24 @@ onMounted(() => {
   border-radius: 0.25rem;
   font-size: 0.75rem;
 }
-.card { position: relative }
+
+.card {
+  position: relative
+}
 
 /* Make card borders more visible on light themes */
 @media (prefers-color-scheme: light) {
   .card {
-    border: 1px solid rgba(0,0,0,0.12);
-    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.96);
   }
-  .page { background: rgba(0,0,0,0.02); }
-  .badge { color: #111827 }
+
+  .page {
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .badge {
+    color: #111827
+  }
 }
 </style>
