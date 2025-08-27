@@ -3,12 +3,13 @@
     <Login v-if="!authenticated" @success="onLoginSuccess" />
 
     <div v-else class="app-layout">
-      <Sidebar :route="route" @navigate="route = $event" @logout="onLogout" />
+    <Sidebar :route="route" @navigate="route = $event" @logout="onLogout" :open="sidebarOpen" @close="sidebarOpen = false" />
 
       <main class="content">
         <header class="header">
-          <div>Bem-vindo, <strong>{{ user.username }}</strong></div>
-          <div class="credits">Créditos: <strong>{{ user.credits }}</strong></div>
+      <div>Bem-vindo, <strong>{{ user.username }}</strong></div>
+      <div class="credits">Créditos: <strong>{{ user.credits }}</strong></div>
+      <button class="menu-button" @click="sidebarOpen = !sidebarOpen" aria-label="Abrir menu">☰</button>
         </header>
 
         <Home v-if="route==='home'" :user="user" />
@@ -28,6 +29,7 @@ import Sidebar from './components/Sidebar.vue'
 const authenticated = ref(false)
 const user = ref({ username: '', credits: 0 })
 const route = ref('home')
+const sidebarOpen = ref(false)
 
 function onLoginSuccess(payload) {
   authenticated.value = true
@@ -51,6 +53,16 @@ html, body, #app { height: 100%; }
 .sidebar { width: 220px; flex-shrink: 0; }
 .content { flex: 1 1 auto; padding: 1.5rem; min-height: 100vh; }
 .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem }
+
+.menu-button { display:none; background:transparent; border:1px solid rgba(255,255,255,0.06); color:inherit; padding:.35rem .6rem; border-radius:6px }
+
+@media (max-width: 768px) {
+  .content { padding: 1rem; }
+  /* show mobile menu button */
+  .menu-button { display:block }
+  /* keep layout single-column */
+  .app-layout { flex-direction: column; }
+}
 
 @media (prefers-color-scheme: light) { :root { --card-bg:#fff; --card-border:#e6e9ee; --accent:#2563eb } }
 </style>
