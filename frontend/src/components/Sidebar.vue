@@ -6,7 +6,7 @@
       <div class="brand">Painel</div>
       <nav>
         <a href="#" :class="{active: route==='home'}" @click.prevent="$emit('navigate','home'); $emit('close')">Início</a>
-        <a href="#" :class="{active: route==='gerar-teste'}" @click.prevent="$emit('navigate','gerar-teste'); $emit('close')">Gerar-teste</a>
+        <a href="#" :class="{active: route==='gerar-teste'}" @click.prevent="$emit('navigate','gerar-teste'); $emit('close')">Gerar teste</a>
         <a href="#" @click.prevent="$emit('logout')" class="logout">Sair</a>
       </nav>
     </div>
