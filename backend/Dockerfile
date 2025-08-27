@@ -47,7 +47,7 @@ RUN chmod 755 "${PB_HOME}/pocketbase" \
 
 # copy project-specific pocketbase folders so hooks/migrations/public are available
 COPY ./pb_public ${PB_WORKDIR}/pb_public
-COPY ./pb_migrations ${PB_WORKDIR}/pb_migrations
+# COPY ./pb_migrations ${PB_WORKDIR}/pb_migrations
 COPY ./pb_hooks ${PB_WORKDIR}/pb_hooks
 
 USER ${USER}
